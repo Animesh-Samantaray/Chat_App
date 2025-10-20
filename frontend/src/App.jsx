@@ -11,6 +11,7 @@ import { useAuthStore } from './store/useAuthStore.js';
 import { Navigate } from 'react-router-dom';
 import {Loader} from 'lucide-react'
 import { Toaster } from 'react-hot-toast';
+
 const App = () => {
   const {authUser , checkAuth , isCheckingAuth} = useAuthStore();
 
@@ -27,7 +28,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <div   >
     
     <Toaster
   position="top-right"
@@ -67,7 +68,7 @@ const App = () => {
 
       
     </Routes>
-    </>
+    </div>
   )
 }
 

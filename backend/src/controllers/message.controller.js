@@ -4,7 +4,7 @@ import cloudinary from '../lib/cloudinary.js'
 export const getUsersForSidebar = async(req,res)=>{
     try{
         const loggedUserId = req.user._id;
-        const filteredUsers = await User.find({_id:{$ne:{loggedUserId}}}).select('-password');
+        const filteredUsers = await User.find({_id:{$ne:loggedUserId}}).select('-password');
 
         res.status(200).json(filteredUsers);
     }
@@ -43,7 +43,7 @@ export const sendMessage = async(req,res)=>{
         }
 
         const newMessage=new Message({
-            senderId,recieverId,text,image:imageUrl
+            senderId,receiverId,text,image:imageUrl
         })
 
         await newMessage.save();
@@ -53,6 +53,6 @@ export const sendMessage = async(req,res)=>{
         res.status(201).json(newMessage);
     }
     catch(error){
-
+        return res.status(500).json({message:error.message})
     }
 }
