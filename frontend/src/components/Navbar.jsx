@@ -65,7 +65,7 @@ const Navbar = () => {
           ) : (
             // If not logged in
             <button
-              onClick={() => navigate('/signin')}
+              onClick={() => navigate('/login')}
               className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow-md hover:shadow-blue-500/30 transition-all active:scale-95"
             >
               Log In

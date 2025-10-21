@@ -7,7 +7,7 @@ import noUser from "../pages/noUser.png";
 import { useAuthStore } from "../store/useAuthStore.js";
 
 const ChatContainer = () => {
-  const { messages, getMessages, isMessagesLoading, selectedUser } = useChatStore();
+  const { messages, getMessages, isMessagesLoading, selectedUser,subscribeToMessages ,unSubscribeFromMessages} = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef();
 
@@ -15,9 +15,18 @@ const ChatContainer = () => {
     
     if (selectedUser?._id) {
       getMessages(selectedUser._id);
-      console.log(messages)
+      subscribeToMessages();
+
+      return()=>unSubscribeFromMessages();
     }
-  }, []);
+  }, [selectedUser._id, getMessages,unSubscribeFromMessages,subscribeToMessages]);
+
+useEffect(() => {
+  if (messageEndRef.current) {
+    
+    messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [messages]);
 
 
   if (isMessagesLoading || !messages) {
@@ -94,7 +103,7 @@ const ChatContainer = () => {
                 </div>
 
                 {/* Time */}
-                <span className=" text-gray-200 mt-1 font-bold text-[20px]">
+                <span className=" text-gray-200 mt-1 font-bold text-[15px]">
                   {new Date(message.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -114,7 +123,7 @@ const ChatContainer = () => {
           );
         })}
 
-        {/* <div ref={messageEndRef} /> */}
+        <div ref={messageEndRef} />
       </div>
 
       <MessageInput />
