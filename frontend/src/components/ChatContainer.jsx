@@ -7,33 +7,37 @@ import noUser from "../pages/noUser.png";
 import { useAuthStore } from "../store/useAuthStore.js";
 
 const ChatContainer = () => {
-  const { messages, getMessages, isMessagesLoading, selectedUser,subscribeToMessages ,unSubscribeFromMessages} = useChatStore();
+  const {
+    messages,
+    getMessages,
+    isMessagesLoading,
+    selectedUser,
+    subscribeToMessages,
+    unSubscribeFromMessages,
+  } = useChatStore();
+
   const { authUser } = useAuthStore();
   const messageEndRef = useRef();
 
   useEffect(() => {
-    
     if (selectedUser?._id) {
       getMessages(selectedUser._id);
       subscribeToMessages();
-
-      return()=>unSubscribeFromMessages();
+      return () => unSubscribeFromMessages();
     }
-  }, [selectedUser._id, getMessages,unSubscribeFromMessages,subscribeToMessages]);
+  }, [selectedUser?._id, getMessages, subscribeToMessages, unSubscribeFromMessages]);
 
-useEffect(() => {
-  if (messageEndRef.current) {
-    
-    messageEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }
-}, [messages]);
-
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   if (isMessagesLoading || !messages) {
     return (
       <div className="flex flex-col h-full bg-[#0f0f0f] text-white">
         <ChatHeader />
-        <div className="overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           <MessageSkeleton />
         </div>
         <div className="border-t border-zinc-800">
@@ -43,13 +47,12 @@ useEffect(() => {
     );
   }
 
-  // Main chat layout (Tailwind-only)
   return (
-    <div className="flex-1 flex flex-col overflow-auto bg-[#0f0f0f] text-white">
+    <div className="flex-1 flex flex-col overflow-hidden bg-[#0f0f0f] text-white">
       <ChatHeader />
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
         {messages.map((message) => {
           const isOwnMessage = message.senderId === authUser._id;
           const avatarSrc = isOwnMessage
@@ -59,51 +62,43 @@ useEffect(() => {
           return (
             <div
               key={message._id}
-              className={`flex items-start gap-3 ${
+              className={`flex items-end gap-3 ${
                 isOwnMessage ? "justify-end" : "justify-start"
               }`}
-              // ref={messageEndRef}
             >
-              {/* Avatar */}
+              {/* Received avatar */}
               {!isOwnMessage && (
                 <img
                   src={avatarSrc}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full object-cover border border-zinc-700"
+                  className="w-10 h-10 rounded-full object-cover border border-zinc-700 hover:scale-150 transition-transform duration-300 z-10"
                 />
               )}
 
-              {/* Message bubble */}
-              <div
-                className={`flex flex-col max-w-xs sm:max-w-sm ${
-                  isOwnMessage ? "items-end" : "items-start"
-                }`}
-              >
-                {/* Sender name */}
-                <span className="text-xs font-medium text-gray-400 mb-1">
-                  {isOwnMessage ? "You" : selectedUser.fullName || "User"}
-                </span>
-
-                {/* Message box */}
+              <div className="relative flex flex-col max-w-[60%]">
                 <div
-                  className={`rounded-2xl px-4 py-2 text-sm shadow-md ${
+                  className={`p-3 rounded-2xl text-sm break-words ${
                     isOwnMessage
-                      ? "bg-blue-600 text-white"
-                      : "bg-zinc-800 text-gray-100"
+                      ? "bg-gradient-to-r from-purple-700 to-purple-500 text-white shadow-md rounded-tr-sm"
+                      : "bg-zinc-800 text-gray-100 shadow-md rounded-tl-sm"
                   }`}
                 >
                   {message.image && (
                     <img
                       src={message.image}
                       alt="Attachment"
-                      className="max-w-[200px] rounded-md mb-2"
+                      className="max-w-[220px] rounded-lg mb-2 cursor-pointer hover:scale-150 hover:shadow-lg transition-transform duration-300 z-20"
                     />
                   )}
                   {message.text && <p>{message.text}</p>}
                 </div>
 
-                {/* Time */}
-                <span className=" text-gray-200 mt-1 font-bold text-[15px]">
+                {/* Time below the bubble */}
+                <span
+                  className={`text-xs text-gray-400 font-medium mt-1 ${
+                    isOwnMessage ? "text-right" : "text-left"
+                  }`}
+                >
                   {new Date(message.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -111,18 +106,17 @@ useEffect(() => {
                 </span>
               </div>
 
-              {/* Avatar for your messages (right side) */}
+              {/* Own avatar */}
               {isOwnMessage && (
                 <img
                   src={avatarSrc}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full object-cover border border-zinc-700"
+                  className="w-10 h-10 rounded-full object-cover border border-zinc-700 hover:scale-150 transition-transform duration-300 z-10"
                 />
               )}
             </div>
           );
         })}
-
         <div ref={messageEndRef} />
       </div>
 

@@ -1,92 +1,87 @@
 import React, { useState, useRef } from "react";
-import { Image, Send,X } from "lucide-react"; // optional icons
+import { Image, Send, X } from "lucide-react"; 
 import { useChatStore } from "../store/useChatStore.js";
 import toast from "react-hot-toast";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
-
-  const {sendMessage} = useChatStore();
+  const { sendMessage } = useChatStore();
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
 
-    const handleImageChange = (e) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
 
-      const file = e.target.files[0];
-console.log("File selected:", file);
-      if(!file.type.startsWith('image/')){
-        toast.error('Plz select an image file');
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onloadend=()=>{
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file)
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const removeImage = () => {
     setImagePreview(null);
-    if(fileInputRef.current){
-      fileInputRef.current.value='';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSendMessage = async (e) => {
-          e.preventDefault();
-          if(!text.trim() && !imagePreview) return;
-           try{
-              await sendMessage({
-                text:text.trim(),
-                image:imagePreview
-              });
+    e.preventDefault();
+    if (!text.trim() && !imagePreview) return;
 
-              setText('');
-              setImagePreview(null);
-              if(fileInputRef.current) fileInputRef.current.value='';
-           }catch(error){
-              console.log(error);
-            toast.error(error.message)
-           }
+    try {
+      await sendMessage({
+        text: text.trim(),
+        image: imagePreview,
+      });
+
+      setText("");
+      setImagePreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    }
   };
 
   return (
-    <div className="w-full bg-zinc-900 border-t border-zinc-800 p-3">
+    <div className="w-full bg-zinc-900 border-t border-zinc-800 p-4">
+      {/* Image Preview */}
       {imagePreview && (
-        <div className="mb-3 flex items-center gap-2">
+        <div className="mb-3 flex items-center gap-3">
           <div className="relative">
             <img
               src={imagePreview}
               alt="Preview"
-              className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
+              className="w-24 h-24 object-cover rounded-xl border border-zinc-700 shadow-md"
             />
             <button
               onClick={removeImage}
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
-              flex items-center justify-center"
               type="button"
+              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center text-white hover:bg-red-500 transition"
             >
-              <X className="size-3" />
+              <X size={16} />
             </button>
           </div>
         </div>
       )}
+
+      {/* Input Form */}
       <form
-        className="flex items-center gap-3 bg-zinc-800 rounded-full px-4 py-2 shadow-inner"
-        onSubmit={handleSendMessage} 
+        className="flex items-center gap-3 bg-zinc-800 rounded-full px-4 py-3 shadow-inner"
+        onSubmit={handleSendMessage}
       >
-        {/* Message input */}
+        {/* Message Input */}
         <input
           type="text"
-          placeholder="Type your message..."
-          className="flex-1 bg-transparent text-zinc-100 placeholder-zinc-500 focus:outline-none"
+          placeholder="Type a message..."
+          className="flex-1 bg-transparent text-zinc-100 placeholder-zinc-500 focus:outline-none text-sm"
           onChange={(e) => setText(e.target.value)}
           value={text}
         />
 
-        {/* Hidden file input */}
+        {/* Hidden File Input */}
         <input
           type="file"
           accept="image/*"
@@ -95,23 +90,23 @@ console.log("File selected:", file);
           className="hidden"
         />
 
-        {/* Image icon */}
-       <button
-            type="button"
-            className={` sm:flex btn btn-circle
-                     ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Image size={20} />
-          </button>
+        {/* Image Button */}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-zinc-700 transition text-zinc-400"
+        >
+          <Image size={20} />
+        </button>
 
-        {/* Send button */}
+        {/* Send Button */}
         <button
           type="submit"
           disabled={!text.trim() && !imagePreview}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
         >
           <Send size={18} />
+          <span className="text-sm font-medium">Send</span>
         </button>
       </form>
     </div>
