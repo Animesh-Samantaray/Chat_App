@@ -19,6 +19,7 @@ const ChatContainer = () => {
   const { authUser } = useAuthStore();
   const messageEndRef = useRef();
 
+  // Fetch messages when selected user changes
   useEffect(() => {
     if (selectedUser?._id) {
       getMessages(selectedUser._id);
@@ -27,13 +28,14 @@ const ChatContainer = () => {
     }
   }, [selectedUser?._id, getMessages, subscribeToMessages, unSubscribeFromMessages]);
 
+  // Auto-scroll to bottom when new message arrives
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   if (isMessagesLoading || !messages) {
     return (
-      <div className="flex flex-col h-full bg-[#0a0a0a] text-white">
+      <div className="flex flex-col h-full bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#1f1f1f] text-white">
         <ChatHeader />
         <div className="flex-1 overflow-y-auto">
           <MessageSkeleton />
@@ -44,14 +46,14 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#0a0a0a] text-white">
+    <div className="flex flex-col h-full bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#1f1f1f] text-white">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-sm border-b border-zinc-800">
+      <div className="sticky top-0 z-20 bg-gradient-to-b from-[#0a0a0a]/90 to-[#111111]/50 backdrop-blur-sm border-b border-zinc-800">
         <ChatHeader />
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-2 py-2 flex flex-col gap-2 sm:gap-3">
+      <div className="flex-1 overflow-y-auto px-2 py-2 pb-24 flex flex-col gap-2 sm:gap-3">
         {messages.map((m) => {
           const isOwn = m.senderId === authUser._id;
           const avatar = isOwn
@@ -61,7 +63,9 @@ const ChatContainer = () => {
           return (
             <div
               key={m._id}
-              className={`flex items-end gap-1 sm:gap-2 ${isOwn ? "justify-end" : "justify-start"}`}
+              className={`flex items-end gap-1 sm:gap-2 ${
+                isOwn ? "justify-end" : "justify-start"
+              }`}
             >
               {!isOwn && (
                 <img
@@ -71,12 +75,16 @@ const ChatContainer = () => {
                 />
               )}
 
-              <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"} max-w-[85%] sm:max-w-[70%]`}>
+              <div
+                className={`flex flex-col ${
+                  isOwn ? "items-end" : "items-start"
+                } max-w-[85%] sm:max-w-[70%]`}
+              >
                 <div
                   className={`px-3 py-2 rounded-2xl text-[12px] sm:text-sm leading-relaxed ${
                     isOwn
-                      ? "bg-[#056162] text-white rounded-tr-sm shadow-md"
-                      : "bg-[#1a1a1a] text-gray-100 rounded-tl-sm shadow-sm"
+                      ? "bg-gradient-to-br from-green-500 to-green-700 text-white rounded-tr-sm shadow-md"
+                      : "bg-[#1a1a1a]/80 text-gray-100 rounded-tl-sm shadow-sm"
                   }`}
                 >
                   {m.image && (
@@ -107,11 +115,13 @@ const ChatContainer = () => {
             </div>
           );
         })}
+
+        {/* Scroll anchor */}
         <div ref={messageEndRef} />
       </div>
 
       {/* Input */}
-      <div className="sticky bottom-0 bg-[#0a0a0a]/95 backdrop-blur-md border-t border-zinc-800">
+      <div className="sticky bottom-0 bg-gradient-to-t from-[#0a0a0a]/95 to-[#111111]/50 backdrop-blur-md border-t border-zinc-800">
         <MessageInput />
       </div>
     </div>

@@ -40,14 +40,20 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-2 sm:p-3 bg-[#0d0d0d] border-t border-zinc-800">
+    <div
+      className="fixed bottom-0 left-0 right-0 
+                 bg-[#0d0d0d] border-t border-zinc-800 
+                 px-2 sm:px-4 py-2 sm:py-3 
+                 z-50 max-w-[100vw]"
+    >
+      {/* 🖼 Image Preview */}
       {imagePreview && (
         <div className="mb-2 flex items-center gap-2">
           <div className="relative">
             <img
               src={imagePreview}
               alt="Preview"
-              className="w-16 h-16 object-cover rounded-lg border border-zinc-700"
+              className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border border-zinc-700"
             />
             <button
               type="button"
@@ -60,18 +66,22 @@ const MessageInput = () => {
         </div>
       )}
 
+      {/* ✍️ Input Form */}
       <form
         onSubmit={handleSend}
-        className="flex items-center gap-2 bg-zinc-800 rounded-full px-3 py-2"
+        className="flex items-center gap-2 bg-zinc-800 rounded-full 
+                   px-3 sm:px-4 py-2 sm:py-2.5 shadow-inner"
       >
+        {/* Text Input */}
         <input
           type="text"
           placeholder="Message..."
-          className="flex-1 bg-transparent text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none"
+          className="flex-1 bg-transparent text-sm sm:text-base text-zinc-100 placeholder-zinc-500 focus:outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
 
+        {/* Hidden File Input */}
         <input
           type="file"
           accept="image/*"
@@ -80,18 +90,21 @@ const MessageInput = () => {
           className="hidden"
         />
 
+        {/* Image Icon */}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="text-zinc-400 hover:text-white transition"
+          className="text-zinc-400 hover:text-white transition p-1 sm:p-2"
         >
           <Image size={18} />
         </button>
 
+        {/* Send Button */}
         <button
           type="submit"
           disabled={!text.trim() && !imagePreview}
-          className="bg-[#056162] hover:bg-[#128c7e] text-white p-2 rounded-full transition disabled:opacity-50"
+          className="bg-[#056162] hover:bg-[#128c7e] text-white 
+                     p-2 sm:p-2.5 rounded-full transition disabled:opacity-50"
         >
           <Send size={16} />
         </button>
