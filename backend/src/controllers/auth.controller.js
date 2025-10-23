@@ -5,6 +5,7 @@ import { generateToken } from '../lib/utils.js';
 import cloudinary from '../lib/cloudinary.js';
 
 // ---------------- SIGNUP ----------------
+
 export const signup = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
@@ -44,7 +45,7 @@ export const signup = async (req, res) => {
   }
 };
 
-// ---------------- LOGIN ----------------
+//---------------- LOGIN ------------------
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -85,6 +86,7 @@ export const logout = (req, res) => {
 
 // ---------------- UPDATE PROFILE ----------------
 // src/controllers/auth.controller.js
+
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
