@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useChatStore } from "../store/useChatStore.js";
+import { useAuthStore } from "../store/useAuthStore.js";
 import ChatHeader from "./ChatHeader.jsx";
 import MessageInput from "./MessageInput.jsx";
 import MessageSkeleton from "./MessageSkeleton.jsx";
 import noUser from "../pages/noUser.png";
-import { useAuthStore } from "../store/useAuthStore.js";
 
 const ChatContainer = () => {
   const {
@@ -28,90 +28,80 @@ const ChatContainer = () => {
   }, [selectedUser?._id, getMessages, subscribeToMessages, unSubscribeFromMessages]);
 
   useEffect(() => {
-    if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   if (isMessagesLoading || !messages) {
     return (
-      <div className="flex flex-col h-full bg-[#0f0f0f] text-white">
+      <div className="flex flex-col h-full bg-[#0a0a0a] text-white">
         <ChatHeader />
         <div className="flex-1 overflow-y-auto">
           <MessageSkeleton />
         </div>
-        <div className="border-t border-zinc-800">
-          <MessageInput />
-        </div>
+        <MessageInput />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-[#0f0f0f] text-white">
-      <ChatHeader />
+    <div className="flex flex-col h-full bg-[#0a0a0a] text-white">
+      {/* Header */}
+      <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-sm border-b border-zinc-800">
+        <ChatHeader />
+      </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
-        {messages.map((message) => {
-          const isOwnMessage = message.senderId === authUser._id;
-          const avatarSrc = isOwnMessage
+      <div className="flex-1 overflow-y-auto px-2 py-2 flex flex-col gap-2 sm:gap-3">
+        {messages.map((m) => {
+          const isOwn = m.senderId === authUser._id;
+          const avatar = isOwn
             ? authUser.profilePic || noUser
             : selectedUser.profilePic || noUser;
 
           return (
             <div
-              key={message._id}
-              className={`flex items-end gap-3 ${
-                isOwnMessage ? "justify-end" : "justify-start"
-              }`}
+              key={m._id}
+              className={`flex items-end gap-1 sm:gap-2 ${isOwn ? "justify-end" : "justify-start"}`}
             >
-              {/* Received avatar */}
-              {!isOwnMessage && (
+              {!isOwn && (
                 <img
-                  src={avatarSrc}
+                  src={avatar}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full object-cover border border-zinc-700 hover:scale-150 transition-transform duration-300 z-10"
+                  className="w-7 h-7 rounded-full border border-zinc-700 sm:w-9 sm:h-9"
                 />
               )}
 
-              <div className="relative flex flex-col max-w-[60%]">
+              <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"} max-w-[85%] sm:max-w-[70%]`}>
                 <div
-                  className={`p-3 rounded-2xl text-sm break-words ${
-                    isOwnMessage
-                      ? "bg-gradient-to-r from-purple-700 to-purple-500 text-white shadow-md rounded-tr-sm"
-                      : "bg-zinc-800 text-gray-100 shadow-md rounded-tl-sm"
+                  className={`px-3 py-2 rounded-2xl text-[12px] sm:text-sm leading-relaxed ${
+                    isOwn
+                      ? "bg-[#056162] text-white rounded-tr-sm shadow-md"
+                      : "bg-[#1a1a1a] text-gray-100 rounded-tl-sm shadow-sm"
                   }`}
                 >
-                  {message.image && (
+                  {m.image && (
                     <img
-                      src={message.image}
-                      alt="Attachment"
-                      className="max-w-[220px] rounded-lg mb-2 cursor-pointer hover:scale-150 hover:shadow-lg transition-transform duration-300 z-20"
+                      src={m.image}
+                      alt="attachment"
+                      className="max-w-[140px] sm:max-w-[180px] rounded-lg mb-1"
                     />
                   )}
-                  {message.text && <p>{message.text}</p>}
+                  {m.text && <p>{m.text}</p>}
                 </div>
 
-                {/* Time below the bubble */}
-                <span
-                  className={`text-xs text-gray-400 font-medium mt-1 ${
-                    isOwnMessage ? "text-right" : "text-left"
-                  }`}
-                >
-                  {new Date(message.createdAt).toLocaleTimeString([], {
+                <span className="text-[10px] text-gray-400 mt-1 px-1">
+                  {new Date(m.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
                 </span>
               </div>
 
-              {/* Own avatar */}
-              {isOwnMessage && (
+              {isOwn && (
                 <img
-                  src={avatarSrc}
+                  src={avatar}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full object-cover border border-zinc-700 hover:scale-150 transition-transform duration-300 z-10"
+                  className="w-7 h-7 rounded-full border border-zinc-700 sm:w-9 sm:h-9"
                 />
               )}
             </div>
@@ -120,7 +110,10 @@ const ChatContainer = () => {
         <div ref={messageEndRef} />
       </div>
 
-      <MessageInput />
+      {/* Input */}
+      <div className="sticky bottom-0 bg-[#0a0a0a]/95 backdrop-blur-md border-t border-zinc-800">
+        <MessageInput />
+      </div>
     </div>
   );
 };

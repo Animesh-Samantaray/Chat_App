@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
-import { Image, Send, X } from "lucide-react"; 
+import { Image, Send, X } from "lucide-react";
 import { useChatStore } from "../store/useChatStore.js";
 import toast from "react-hot-toast";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
-  const { sendMessage } = useChatStore();
   const [imagePreview, setImagePreview] = useState(null);
+  const { sendMessage } = useChatStore();
   const fileInputRef = useRef(null);
 
   const handleImageChange = (e) => {
@@ -15,7 +15,6 @@ const MessageInput = () => {
       toast.error("Please select an image file");
       return;
     }
-
     const reader = new FileReader();
     reader.onloadend = () => setImagePreview(reader.result);
     reader.readAsDataURL(file);
@@ -26,62 +25,53 @@ const MessageInput = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleSendMessage = async (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
     if (!text.trim() && !imagePreview) return;
 
     try {
-      await sendMessage({
-        text: text.trim(),
-        image: imagePreview,
-      });
-
+      await sendMessage({ text: text.trim(), image: imagePreview });
       setText("");
       setImagePreview(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (error) {
-      console.error(error);
-      toast.error(error.message);
+      fileInputRef.current.value = "";
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
   return (
-    <div className="w-full bg-zinc-900 border-t border-zinc-800 p-4">
-      {/* Image Preview */}
+    <div className="p-2 sm:p-3 bg-[#0d0d0d] border-t border-zinc-800">
       {imagePreview && (
-        <div className="mb-3 flex items-center gap-3">
+        <div className="mb-2 flex items-center gap-2">
           <div className="relative">
             <img
               src={imagePreview}
               alt="Preview"
-              className="w-24 h-24 object-cover rounded-xl border border-zinc-700 shadow-md"
+              className="w-16 h-16 object-cover rounded-lg border border-zinc-700"
             />
             <button
-              onClick={removeImage}
               type="button"
-              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center text-white hover:bg-red-500 transition"
+              onClick={removeImage}
+              className="absolute -top-1 -right-1 bg-zinc-800 text-white rounded-full p-[2px] hover:bg-red-500 transition"
             >
-              <X size={16} />
+              <X size={12} />
             </button>
           </div>
         </div>
       )}
 
-      {/* Input Form */}
       <form
-        className="flex items-center gap-3 bg-zinc-800 rounded-full px-4 py-3 shadow-inner"
-        onSubmit={handleSendMessage}
+        onSubmit={handleSend}
+        className="flex items-center gap-2 bg-zinc-800 rounded-full px-3 py-2"
       >
-        {/* Message Input */}
         <input
           type="text"
-          placeholder="Type a message..."
-          className="flex-1 bg-transparent text-zinc-100 placeholder-zinc-500 focus:outline-none text-sm"
-          onChange={(e) => setText(e.target.value)}
+          placeholder="Message..."
+          className="flex-1 bg-transparent text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none"
           value={text}
+          onChange={(e) => setText(e.target.value)}
         />
 
-        {/* Hidden File Input */}
         <input
           type="file"
           accept="image/*"
@@ -90,23 +80,20 @@ const MessageInput = () => {
           className="hidden"
         />
 
-        {/* Image Button */}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-zinc-700 transition text-zinc-400"
+          className="text-zinc-400 hover:text-white transition"
         >
-          <Image size={20} />
+          <Image size={18} />
         </button>
 
-        {/* Send Button */}
         <button
           type="submit"
           disabled={!text.trim() && !imagePreview}
-          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+          className="bg-[#056162] hover:bg-[#128c7e] text-white p-2 rounded-full transition disabled:opacity-50"
         >
-          <Send size={18} />
-          <span className="text-sm font-medium">Send</span>
+          <Send size={16} />
         </button>
       </form>
     </div>

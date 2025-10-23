@@ -8,28 +8,25 @@ const ChatHeader = () => {
   const { onlineUsers } = useAuthStore();
 
   return (
-    <header className="px-4 py-3 border-b border-zinc-800 bg-zinc-900/90 backdrop-blur-md flex items-center justify-between">
-      {/* User Info Section */}
-      <div className="flex items-center gap-3">
-        {/* Avatar */}
+    <header className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 bg-[#0d0d0d]/90 border-b border-zinc-800">
+      <div className="flex items-center gap-2">
         <div className="relative">
           <img
             src={selectedUser.profilePic || noUser}
             alt={selectedUser.fullName}
-            className="size-10 rounded-full object-cover border border-zinc-700 shadow-sm"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-zinc-700"
           />
           {onlineUsers.includes(selectedUser._id) && (
-            <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#0d0d0d]" />
           )}
         </div>
 
-        {/* User Details */}
-        <div className="flex flex-col">
-          <h3 className="font-semibold text-zinc-100 leading-tight">
+        <div>
+          <h3 className="text-sm font-semibold text-zinc-100 sm:text-base">
             {selectedUser.fullName}
           </h3>
           <p
-            className={`text-sm ${
+            className={`text-[11px] sm:text-sm ${
               onlineUsers.includes(selectedUser._id)
                 ? "text-green-400"
                 : "text-zinc-500"
@@ -40,12 +37,11 @@ const ChatHeader = () => {
         </div>
       </div>
 
-      {/* Close Button */}
       <button
         onClick={() => setSelectedUser(null)}
-        className="p-2 rounded-full hover:bg-zinc-800 transition-all duration-200 text-zinc-400 hover:text-zinc-200"
+        className="p-1 sm:p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition"
       >
-        <X className="size-5" />
+        <X size={16} />
       </button>
     </header>
   );

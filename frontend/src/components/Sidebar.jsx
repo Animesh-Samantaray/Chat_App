@@ -16,65 +16,61 @@ const Sidebar = () => {
   }, [getUsers]);
 
   const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
+    ? users.filter((u) => onlineUsers.includes(u._id))
     : users;
 
   if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
-    <aside className="flex-shrink-0 w-20 sm:w-24 md:w-28 lg:w-72 bg-zinc-900 border-r border-zinc-800 flex flex-col transition-all duration-300">
+    <aside className="flex-shrink-0 w-16 sm:w-20 md:w-24 lg:w-72 bg-[#0d0d0d] border-r border-zinc-800 flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-zinc-800">
-        <Users className="w-5 h-5 text-zinc-400" />
-        <span className="font-semibold text-zinc-100 hidden lg:block">
+      <div className="flex items-center gap-2 p-3 border-b border-zinc-800">
+        <Users className="w-4 h-4 text-zinc-400" />
+        <span className="text-sm font-semibold text-zinc-100 hidden lg:block">
           Contacts
         </span>
       </div>
 
-      {/* Users List */}
-      <div className="flex-1 overflow-y-auto py-3 space-y-2 px-2">
-        {filteredUsers.map((user) => (
+      {/* Users */}
+      <div className="flex-1 overflow-y-auto p-2 space-y-2">
+        {filteredUsers.map((u) => (
           <button
-            key={user._id}
-            onClick={() => setSelectedUser(user)}
-            className={`w-full px-3 py-2 flex items-center gap-3 rounded-md transition-all duration-150 hover:bg-zinc-800/70 ${
-              selectedUser?._id === user._id
+            key={u._id}
+            onClick={() => setSelectedUser(u)}
+            className={`flex items-center gap-2 w-full px-2 py-2 rounded-md transition-all duration-150 ${
+              selectedUser?._id === u._id
                 ? "bg-zinc-800 ring-1 ring-zinc-700"
-                : ""
+                : "hover:bg-zinc-800/60"
             }`}
           >
             <div className="relative flex-shrink-0">
               <img
-                src={user.profilePic || noUser}
-                alt={user.fullName}
-                className="w-10 h-10 object-cover rounded-full border border-zinc-700 hover:scale-110 transition-transform"
+                src={u.profilePic || noUser}
+                alt={u.fullName}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-zinc-700"
               />
-              {onlineUsers.includes(user._id) && (
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-black" />
+              {onlineUsers.includes(u._id) && (
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#0d0d0d]" />
               )}
             </div>
 
-            <div className="flex flex-col min-w-0 hidden lg:flex">
-              <div className="font-medium text-zinc-100 truncate">
-                {user.fullName}
-              </div>
-              <div
-                className={`text-sm ${
-                  onlineUsers.includes(user._id)
+            <div className="hidden lg:flex flex-col items-start min-w-0">
+              <span className="text-sm text-zinc-100 truncate">{u.fullName}</span>
+              <span
+                className={`text-xs ${
+                  onlineUsers.includes(u._id)
                     ? "text-green-400"
                     : "text-zinc-500"
                 }`}
               >
-                {onlineUsers.includes(user._id) ? "Online" : "Offline"}
-              </div>
+                {onlineUsers.includes(u._id) ? "Online" : "Offline"}
+              </span>
             </div>
           </button>
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-5 text-sm">
-            No Users
-          </div>
+          <p className="text-center text-zinc-500 text-xs py-3">No Users</p>
         )}
       </div>
     </aside>
