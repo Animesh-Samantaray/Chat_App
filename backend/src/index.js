@@ -16,9 +16,7 @@ const __dirname=path.resolve();
 
 
 connectDb();
-app.get('/',(req,res)=>{
-    res.send('root file')
-})
+
 app.use(cookieParser())
 app.use(cors({
     origin:'http://localhost:5173',
